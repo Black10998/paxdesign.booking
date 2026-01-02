@@ -72,6 +72,7 @@ $team_members = PAXdesign_Booking::get_instance()->get_team_members();
         <div class="paxdesign-booking-step-dot active"></div>
         <div class="paxdesign-booking-step-dot"></div>
         <div class="paxdesign-booking-step-dot"></div>
+        <div class="paxdesign-booking-step-dot"></div>
       </div>
       
       <!-- Step 1: Team Selection -->
@@ -79,7 +80,7 @@ $team_members = PAXdesign_Booking::get_instance()->get_team_members();
         <h3 style="text-align: center; margin-bottom: 16px; font-size: 14px; font-weight: 600; color: #666;">Wählen Sie Ihren Ansprechpartner</h3>
         <div class="paxdesign-booking-team-grid">
           <?php foreach ($team_members as $key => $member) : ?>
-          <div class="paxdesign-booking-team-card" data-member="<?php echo esc_attr($key); ?>">
+          <div class="paxdesign-booking-team-card" data-member="<?php echo esc_attr($key); ?>" data-has-services="<?php echo isset($member['has_services']) && $member['has_services'] ? 'true' : 'false'; ?>">
             <div class="paxdesign-booking-team-avatar">
               <img src="<?php echo esc_url($member['image']); ?>" alt="<?php echo esc_attr($member['name']); ?>">
             </div>
@@ -89,6 +90,14 @@ $team_members = PAXdesign_Booking::get_instance()->get_team_members();
             </div>
           </div>
           <?php endforeach; ?>
+        </div>
+      </div>
+      
+      <!-- Step 1.5: Service Selection (for Adam only) -->
+      <div class="paxdesign-booking-content" data-step="1.5">
+        <h3 style="text-align: center; margin-bottom: 16px; font-size: 14px; font-weight: 600; color: #666;">Wählen Sie Ihren gewünschten Service</h3>
+        <div class="paxdesign-booking-services-grid" id="paxdesignServicesGrid">
+          <!-- Services will be populated by JavaScript -->
         </div>
       </div>
       
@@ -155,6 +164,17 @@ $team_members = PAXdesign_Booking::get_instance()->get_team_members();
             <div>
               <span class="paxdesign-booking-summary-label">Ansprechpartner</span>
               <span class="paxdesign-booking-summary-value" id="paxdesignSummaryMember"></span>
+            </div>
+          </div>
+          
+          <div class="paxdesign-booking-summary-item" id="paxdesignSummaryServiceItem" style="display: none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+            </svg>
+            <div>
+              <span class="paxdesign-booking-summary-label">Service</span>
+              <span class="paxdesign-booking-summary-value" id="paxdesignSummaryService"></span>
             </div>
           </div>
           

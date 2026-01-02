@@ -2,7 +2,7 @@
 /*
 Plugin Name: PAXdesign Booking System
 Description: Professional booking system with minimal chat-style interface
-Version: 2.1.0
+Version: 2.2.0
 Author: PAXdesign
 Author URI: https://paxdesign.at
 License: GPL v2 or later
@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('PAXDESIGN_BOOKING_VERSION', '2.1.0');
+define('PAXDESIGN_BOOKING_VERSION', '2.2.0');
 define('PAXDESIGN_BOOKING_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('PAXDESIGN_BOOKING_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -62,7 +62,8 @@ class PAXdesign_Booking {
         wp_localize_script('paxdesign-booking-script', 'paxdesignBooking', array(
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('paxdesign_booking_nonce'),
-            'teamMembers' => $this->get_team_members()
+            'teamMembers' => $this->get_team_members(),
+            'services' => $this->get_services()
         ));
     }
     
@@ -72,19 +73,99 @@ class PAXdesign_Booking {
                 'name' => 'Adam Aljmersaew',
                 'role' => 'Kunden- & Vertriebsmanager',
                 'email' => get_option('paxdesign_booking_email_adam', 'info@paxdesign.at'),
-                'image' => 'https://paxdesign.at/wp-content/uploads/2025/12/44D4A84C-8747-495B-99BD-645CAF57809A.jpeg'
+                'image' => 'https://paxdesign.at/wp-content/uploads/2025/12/44D4A84C-8747-495B-99BD-645CAF57809A.jpeg',
+                'has_services' => true
             ),
             'ahmad' => array(
                 'name' => 'Ahmad Al Khallaf',
                 'role' => 'Web Development Specialist',
                 'email' => get_option('paxdesign_booking_email_ahmad', 'info@paxdesign.at'),
-                'image' => 'https://paxdesign.at/wp-content/uploads/2025/12/38319D43-77FD-42D8-91BA-69E23BE7879C-e1767119492655.avif'
+                'image' => 'https://paxdesign.at/wp-content/uploads/2025/12/38319D43-77FD-42D8-91BA-69E23BE7879C-e1767119492655.avif',
+                'has_services' => false
             ),
             'bernt' => array(
                 'name' => 'Bernt Unterluggauer',
                 'role' => 'Leitung & Vertrieb',
                 'email' => get_option('paxdesign_booking_email_bernt', 'info@paxdesign.at'),
-                'image' => 'https://paxdesign.at/wp-content/uploads/2025/12/EDDB358B-0472-4E54-BA12-946C1170DA7C.jpeg'
+                'image' => 'https://paxdesign.at/wp-content/uploads/2025/12/EDDB358B-0472-4E54-BA12-946C1170DA7C.jpeg',
+                'has_services' => false
+            )
+        );
+    }
+    
+    public function get_services() {
+        return array(
+            'website' => array(
+                'name' => 'Website',
+                'price_monthly' => '4.000',
+                'price_yearly' => '42.000',
+                'description' => 'Professionelle Website mit modernem Design',
+                'icon' => '🌐'
+            ),
+            'webapp' => array(
+                'name' => 'Web App',
+                'price_monthly' => '8.000',
+                'price_yearly' => '84.000',
+                'description' => 'Maßgeschneiderte Webanwendung',
+                'icon' => '💻'
+            ),
+            'android' => array(
+                'name' => 'Android App',
+                'price_monthly' => '10.000',
+                'price_yearly' => '105.000',
+                'description' => 'Native Android-Anwendung',
+                'icon' => '📱'
+            ),
+            'ios' => array(
+                'name' => 'iOS App',
+                'price_monthly' => '12.000',
+                'price_yearly' => '126.000',
+                'description' => 'Native iOS-Anwendung',
+                'icon' => '🍎'
+            ),
+            'crossplatform' => array(
+                'name' => 'iOS + Android',
+                'price_monthly' => '16.000',
+                'price_yearly' => '168.000',
+                'description' => 'Cross-Platform App',
+                'icon' => '📲',
+                'popular' => true
+            ),
+            'androidtv' => array(
+                'name' => 'Android TV',
+                'price_monthly' => '14.000',
+                'price_yearly' => '147.000',
+                'description' => 'TV-Anwendung',
+                'icon' => '📺'
+            ),
+            'security' => array(
+                'name' => 'IT-Sicherheit',
+                'price_monthly' => '16.000',
+                'price_yearly' => '168.000',
+                'description' => 'Security Audit & Implementierung',
+                'icon' => '🔒'
+            ),
+            'backend' => array(
+                'name' => 'Backend System',
+                'price_monthly' => '18.000',
+                'price_yearly' => '189.000',
+                'description' => 'Skalierbare Backend-Infrastruktur',
+                'icon' => '⚙️'
+            ),
+            'devops' => array(
+                'name' => 'Server & DevOps',
+                'price_monthly' => '20.000',
+                'price_yearly' => '210.000',
+                'description' => 'Server-Infrastruktur & CI/CD',
+                'icon' => '🖥️'
+            ),
+            'enterprise' => array(
+                'name' => 'Enterprise',
+                'price_monthly' => '30.000',
+                'price_yearly' => '315.000',
+                'description' => 'Komplettlösung für Unternehmen',
+                'icon' => '🏢',
+                'premium' => true
             )
         );
     }
@@ -98,6 +179,7 @@ class PAXdesign_Booking {
         
         $booking_data = array(
             'member' => sanitize_text_field($_POST['member']),
+            'service' => isset($_POST['service']) ? sanitize_text_field($_POST['service']) : '',
             'date' => sanitize_text_field($_POST['date']),
             'time' => sanitize_text_field($_POST['time']),
             'name' => sanitize_text_field($_POST['name']),
@@ -138,13 +220,25 @@ class PAXdesign_Booking {
         $date_obj = DateTime::createFromFormat('Y-m-d', $booking_data['date']);
         $formatted_date = $date_obj->format('d.m.Y');
         
+        $service_info = '';
+        if (!empty($booking_data['service'])) {
+            $services = $this->get_services();
+            if (isset($services[$booking_data['service']])) {
+                $service = $services[$booking_data['service']];
+                $service_info = sprintf("\nGEWÄHLTER SERVICE:\n%s - ab €%s\n", 
+                    $service['name'], 
+                    $service['price_monthly']
+                );
+            }
+        }
+        
         $message = sprintf("
 Neue Terminbuchung bei PAXdesign
 =====================================
 
 ANSPRECHPARTNER:
 %s - %s
-
+%s
 TERMIN:
 Datum: %s
 Uhrzeit: %s
@@ -160,6 +254,7 @@ Nachricht: %s
         ",
             $member_info['name'],
             $member_info['role'],
+            $service_info,
             $formatted_date,
             $booking_data['time'],
             $booking_data['name'],
@@ -191,6 +286,15 @@ Nachricht: %s
         $date_obj = DateTime::createFromFormat('Y-m-d', $booking_data['date']);
         $formatted_date = $date_obj->format('d.m.Y');
         
+        $service_info = '';
+        if (!empty($booking_data['service'])) {
+            $services = $this->get_services();
+            if (isset($services[$booking_data['service']])) {
+                $service = $services[$booking_data['service']];
+                $service_info = sprintf("Service: %s\n", $service['name']);
+            }
+        }
+        
         $message = sprintf("
 Hallo %s,
 
@@ -199,7 +303,7 @@ vielen Dank für Ihre Terminbuchung bei PAXdesign!
 Ihr Termin wurde erfolgreich gebucht:
 
 Ansprechpartner: %s
-Datum: %s
+%sDatum: %s
 Uhrzeit: %s
 
 Wir freuen uns auf das Gespräch mit Ihnen!
@@ -219,6 +323,7 @@ www.paxdesign.at
         ",
             $booking_data['name'],
             $member_info['name'],
+            $service_info,
             $formatted_date,
             $booking_data['time']
         );
@@ -239,6 +344,7 @@ www.paxdesign.at
             $table_name,
             array(
                 'team_member' => $booking_data['member'],
+                'service' => $booking_data['service'],
                 'booking_date' => $booking_data['date'],
                 'booking_time' => $booking_data['time'],
                 'customer_name' => $booking_data['name'],
@@ -249,7 +355,7 @@ www.paxdesign.at
                 'status' => 'pending',
                 'created_at' => current_time('mysql')
             ),
-            array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
+            array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
         );
     }
     
@@ -298,6 +404,7 @@ function paxdesign_booking_activate() {
     $sql = "CREATE TABLE IF NOT EXISTS $table_name (
         id bigint(20) NOT NULL AUTO_INCREMENT,
         team_member varchar(50) NOT NULL,
+        service varchar(50),
         booking_date date NOT NULL,
         booking_time varchar(10) NOT NULL,
         customer_name varchar(255) NOT NULL,

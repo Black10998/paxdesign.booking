@@ -1,6 +1,6 @@
 /**
  * PAXdesign Booking System JavaScript
- * Version: 2.1.0
+ * Version: 2.2.0
  * Minimal, Professional, No Animations
  */
 
@@ -9,6 +9,7 @@
     
     let bookingData = {
         member: null,
+        service: null,
         date: null,
         time: null,
         currentStep: 1
@@ -44,7 +45,15 @@
         $(document).on('click', '.paxdesign-booking-team-card', function(e) {
             e.preventDefault();
             const member = $(this).data('member');
-            selectTeamMember(member);
+            const hasServices = $(this).data('has-services');
+            selectTeamMember(member, hasServices);
+        });
+        
+        // Service selection
+        $(document).on('click', '.paxdesign-booking-service-card', function(e) {
+            e.preventDefault();
+            const service = $(this).data('service');
+            selectService(service);
         });
         
         // Navigation
@@ -86,6 +95,7 @@
         setTimeout(function() {
             bookingData = {
                 member: null,
+                service: null,
                 date: null,
                 time: null,
                 currentStep: 1
@@ -96,12 +106,13 @@
             $('.paxdesign-booking-content[data-step="1"]').addClass('active');
             $('.paxdesign-booking-success').removeClass('active');
             $('.paxdesign-booking-team-card').removeClass('selected');
+            $('.paxdesign-booking-service-card').removeClass('selected');
             
             updateStepIndicator();
         }, 100);
     }
     
-    function selectTeamMember(member) {
+    function selectTeamMember(member, hasServices) {
         bookingData.member = member;
         
         $('.paxdesign-booking-team-card').removeClass('selected');
@@ -111,7 +122,54 @@
         $('#paxdesignSelectedMemberName').text(memberData.name);
         
         setTimeout(function() {
-            nextStep();
+            if (hasServices === true || hasServices === 'true') {
+                // Show service selection for Adam
+                renderServices();
+                $('.paxdesign-booking-content[data-step="1"]').removeClass('active');
+                $('.paxdesign-booking-content[data-step="1.5"]').addClass('active');
+            } else {
+                // Skip to date selection for others
+                nextStep();
+            }
+        }, 200);
+    }
+    
+    function renderServices() {
+        const $servicesGrid = $('#paxdesignServicesGrid');
+        $servicesGrid.empty();
+        
+        const services = paxdesignBooking.services;
+        
+        $.each(services, function(key, service) {
+            const badge = service.popular ? '<span class="service-badge popular">Beliebt</span>' : 
+                         service.premium ? '<span class="service-badge premium">Premium</span>' : '';
+            
+            const $card = $('<div class="paxdesign-booking-service-card" data-service="' + key + '">' +
+                '<div class="service-icon">' + service.icon + '</div>' +
+                '<h4>' + service.name + '</h4>' +
+                '<p class="service-price">ab €' + service.price_monthly + '</p>' +
+                '<p class="service-description">' + service.description + '</p>' +
+                badge +
+                '</div>');
+            
+            $servicesGrid.append($card);
+        });
+    }
+    
+    function selectService(service) {
+        bookingData.service = service;
+        
+        $('.paxdesign-booking-service-card').removeClass('selected');
+        $('.paxdesign-booking-service-card[data-service="' + service + '"]').addClass('selected');
+        
+        const serviceData = paxdesignBooking.services[service];
+        
+        setTimeout(function() {
+            $('.paxdesign-booking-content[data-step="1.5"]').removeClass('active');
+            bookingData.currentStep = 2;
+            $('.paxdesign-booking-content[data-step="2"]').addClass('active');
+            updateStepIndicator();
+            renderCalendar();
         }, 200);
     }
     
@@ -280,6 +338,15 @@
         const member = paxdesignBooking.teamMembers[bookingData.member];
         $('#paxdesignSummaryMember').text(member.name + ' - ' + member.role);
         
+        // Show service if selected
+        if (bookingData.service) {
+            const service = paxdesignBooking.services[bookingData.service];
+            $('#paxdesignSummaryService').text(service.name + ' - ab €' + service.price_monthly);
+            $('#paxdesignSummaryServiceItem').show();
+        } else {
+            $('#paxdesignSummaryServiceItem').hide();
+        }
+        
         const date = new Date(bookingData.date);
         const weekdays = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
         const months = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 
@@ -302,6 +369,7 @@
             
             const formData = {
                 member: bookingData.member,
+                service: bookingData.service || '',
                 date: bookingData.date,
                 time: bookingData.time,
                 name: $('#paxdesignBookingName').val(),
@@ -321,6 +389,7 @@
                 data: {
                     action: 'paxdesign_submit_booking',
                     member: formData.member,
+                    service: formData.service,
                     date: formData.date,
                     time: formData.time,
                     name: formData.name,

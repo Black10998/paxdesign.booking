@@ -908,3 +908,93 @@
     height: 21px;
   }
 }
+
+/* Service Selection Grid */
+.paxdesign-booking-services-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  max-height: 350px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.paxdesign-booking-service-card {
+  position: relative;
+  background: #fafafa;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 14px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.paxdesign-booking-service-card:hover {
+  border-color: #d6ff00;
+  background: #f5f5f5;
+}
+
+.paxdesign-booking-service-card.selected {
+  background: #000;
+  border-color: #d6ff00;
+}
+
+.paxdesign-booking-service-card .service-icon {
+  font-size: 28px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.paxdesign-booking-service-card h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.paxdesign-booking-service-card.selected h4 {
+  color: #fff;
+}
+
+.paxdesign-booking-service-card .service-price {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #d6ff00;
+}
+
+.paxdesign-booking-service-card .service-description {
+  margin: 0;
+  font-size: 12px;
+  color: #666;
+  line-height: 1.4;
+}
+
+.paxdesign-booking-service-card.selected .service-description {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.paxdesign-booking-service-card .service-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.paxdesign-booking-service-card .service-badge.popular {
+  background: #d6ff00;
+  color: #000;
+}
+
+.paxdesign-booking-service-card .service-badge.premium {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: #000;
+}
